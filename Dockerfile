@@ -30,4 +30,11 @@ ENV M2 $M2_HOME/bin
 ENV PATH $M2:$PATH
 ENV JAVA_HOME /usr/java/latest
 
+# hub
+RUN wget -q https://github.com/github/hub/releases/download/v2.2.3/hub-linux-amd64-2.2.3.tgz && \
+  tar -zxvf hub-linux-amd64-2.2.3.tgz && \
+  mv hub-linux-amd64-2.2.3/bin/hub /usr/bin/ && \
+  rm -rf hub-linux-amd64-2.2.3.tgz && \
+  rm -rf hub-linux-amd64-2.2.3
+
 CMD cat
