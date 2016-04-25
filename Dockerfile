@@ -50,4 +50,6 @@ RUN wget -q https://github.com/github/hub/releases/download/v2.2.3/hub-linux-amd
   rm -rf hub-linux-amd64-2.2.3.tgz && \
   rm -rf hub-linux-amd64-2.2.3
 
+RUN mkdir /root/workspaces
+WORKDIR /root/workspaces
 CMD cat
