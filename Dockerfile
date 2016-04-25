@@ -52,4 +52,4 @@ RUN wget -q https://github.com/github/hub/releases/download/v2.2.3/hub-linux-amd
 
 RUN mkdir /root/workspaces
 WORKDIR /root/workspaces
-CMD cat
+CMD sleep infinity
