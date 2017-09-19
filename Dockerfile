@@ -30,6 +30,12 @@ RUN curl -L https://github.com/github/hub/releases/download/v2.2.3/hub-linux-amd
   mv hub-linux-amd64-2.2.3/bin/hub /usr/bin/ && \
   rm -rf hub-linux-amd64-2.2.3
 
+# exposecontroller
+ENV EXPOSECONTROLLER_VERSION 2.3.27
+RUN curl -L https://github.com/fabric8io/exposecontroller/releases/download/v$EXPOSECONTROLLER_VERSION/exposecontroller-linux-amd64 > exposecontroller && \
+  chmod +x exposecontroller && \
+  mv exposecontroller /usr/bin/
+
 RUN mkdir /root/workspaces
 WORKDIR /root/workspaces
 CMD sleep infinity
