@@ -17,13 +17,14 @@
 @Library('github.com/fabric8io/fabric8-pipeline-library@master')
 def utils = new io.fabric8.Utils()
 def flow = new io.fabric8.Fabric8Commands()
+def project = "fabric8/maven-builder"
 dockerTemplate{
    clientsNode {
     ws{
       checkout scm
 
       if (utils.isCI()){
-        def snapshotImageName = "fabric8/maven-builder:SNAPSHOT-${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
+        def snapshotImageName = "${project}:SNAPSHOT-${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
         container('docker'){
           stage('build snapshot image'){
             sh "docker build -t ${snapshotImageName} ."
@@ -54,7 +55,7 @@ dockerTemplate{
         //   }
         // }
 
-        def imageName = "fabric8/maven-builder:${v}"
+        def imageName = "${project}:${v}"
 
         container('docker'){
           stage('build image'){
