@@ -36,6 +36,10 @@ RUN curl -L https://github.com/fabric8io/exposecontroller/releases/download/v$EX
   chmod +x exposecontroller && \
   mv exposecontroller /usr/bin/
 
+# updatebot
+ENV UPDATEBOT_VERSION 1.0.0
+RUN curl -L http://central.maven.org/maven2/io/fabric8/updatebot/updatebot/$UPDATEBOT_VERSION/updatebot-$UPDATEBOT_VERSION.jar -o /usr/bin/updatebot && chmod +x /usr/bin/updatebot
+
 RUN mkdir /root/workspaces
 WORKDIR /root/workspaces
 CMD sleep infinity
