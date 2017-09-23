@@ -17,14 +17,13 @@
 @Library('github.com/fabric8io/fabric8-pipeline-library@master')
 def utils = new io.fabric8.Utils()
 def flow = new io.fabric8.Fabric8Commands()
-def project = "fabric8io-images/maven-builder"
 dockerTemplate{
    clientsNode {
     ws{
       checkout scm
 
       if (utils.isCI()){
-        def snapshotImageName = "${project}:SNAPSHOT-${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
+        def snapshotImageName = "fabric8/maven-builder:SNAPSHOT-${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
         container('docker'){
           stage('build snapshot image'){
             sh "docker build -t ${snapshotImageName} ."
@@ -40,7 +39,7 @@ dockerTemplate{
             }
             def message = "snapshot maven-builder image is available for testing.  `docker pull ${snapshotImageName}`"
             container('docker'){
-                flow.addCommentToPullRequest(message, pr, project)
+                flow.addCommentToPullRequest(message, pr, 'fabric8io-images/maven-builder')
             }
         }
       } else if (utils.isCD()){
@@ -55,7 +54,7 @@ dockerTemplate{
         //   }
         // }
 
-        def imageName = "${project}:${v}"
+        def imageName = "fabric8/maven-builder:${v}"
 
         container('docker'){
           stage('build image'){
