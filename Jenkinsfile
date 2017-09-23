@@ -17,7 +17,7 @@
 @Library('github.com/fabric8io/fabric8-pipeline-library@master')
 def utils = new io.fabric8.Utils()
 def flow = new io.fabric8.Fabric8Commands()
-def project = "fabric8/maven-builder"
+def project = "fabric8io-images/maven-builder"
 dockerTemplate{
    clientsNode {
     ws{
