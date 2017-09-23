@@ -16,6 +16,7 @@
  */
 @Library('github.com/fabric8io/fabric8-pipeline-library@master')
 def utils = new io.fabric8.Utils()
+def flow = new io.fabric8.Fabric8Commands()
 dockerTemplate{
    clientsNode {
     ws{
