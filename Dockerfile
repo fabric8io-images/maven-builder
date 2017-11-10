@@ -1,7 +1,7 @@
 FROM centos:7
 
 RUN yum update -y && \
-  yum install -y docker unzip java-1.8.0-openjdk-devel which && \
+  yum install -y docker unzip java-1.8.0-openjdk-devel java-1.8.0-openjdk-devel.i686 which && \
   yum install -y make curl-devel expat-devel gettext-devel openssl-devel zlib-devel gcc perl-ExtUtils-MakeMaker && \
   curl -L https://www.kernel.org/pub/software/scm/git/git-2.8.3.tar.gz | tar xzv && \
   pushd git-2.8.3 && \
@@ -23,7 +23,11 @@ ENV M2_HOME /opt/apache-maven-3.3.9
 ENV maven.home $M2_HOME
 ENV M2 $M2_HOME/bin
 ENV PATH $M2:$PATH
-ENV JAVA_HOME /usr/lib/jvm/java-1.8.0
+
+# Set JDK to be 32bit
+COPY set_java $M2
+RUN $M2/set_java && rm $M2/set_java
+RUN java -version
 
 # hub
 RUN curl -L https://github.com/github/hub/releases/download/v2.2.3/hub-linux-amd64-2.2.3.tgz | tar xzv && \
