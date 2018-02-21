@@ -15,9 +15,9 @@ ENV PATH $M2:$PATH
 
 # Set JDK to be 32bit and set alternatives.
 # Maven actually uses javac, not java
-RUN JAVA_32=$(alternatives --display java | grep family | grep i386 | cut -d' ' -f1) && \
+RUN JAVA_32=$(alternatives --display java | awk '/family.*i386/{print $1}') && \
     alternatives --set java ${JAVA_32} && \
-    JAVAC_32=$(alternatives --display javac | grep family | grep i386 | cut -d' ' -f1) && \
+    JAVAC_32=$(alternatives --display javac | awk '/family.*i386/{print $1}') && \
     alternatives --set javac ${JAVAC_32} && \
     java -version
 
