@@ -5,7 +5,8 @@ RUN yum update -y && \
   yum clean all
 
 # Maven
-RUN curl -L http://mirrors.ukfast.co.uk/sites/ftp.apache.org/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.tar.gz | tar -C /opt -xzv
+ENV MAVEN_VERSION 3.5.2
+RUN curl -s -L http://mirrors.ukfast.co.uk/sites/ftp.apache.org/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz | tar -C /opt -xzv
 
 ENV M2_HOME /opt/apache-maven-3.3.9
 ENV maven.home $M2_HOME
