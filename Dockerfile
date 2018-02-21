@@ -12,10 +12,13 @@ ENV maven.home $M2_HOME
 ENV M2 $M2_HOME/bin
 ENV PATH $M2:$PATH
 
-# Set JDK to be 32bit
-COPY set_java $M2
-RUN $M2/set_java && rm $M2/set_java
-RUN java -version
+# Set JDK to be 32bit and set alternatives.
+# Maven actually uses javac, not java
+RUN JAVA_32=$(alternatives --display java | grep family | grep i386 | cut -d' ' -f1) && \
+    alternatives --set java ${JAVA_32} && \
+    JAVAC_32=$(alternatives --display javac | grep family | grep i386 | cut -d' ' -f1) && \
+    alternatives --set javac ${JAVAC_32} && \
+    java -version
 
 RUN mkdir /root/workspaces
 WORKDIR /root/workspaces
