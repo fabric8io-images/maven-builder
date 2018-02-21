@@ -1,14 +1,7 @@
 FROM centos:7
 
 RUN yum update -y && \
-  yum install -y docker unzip java-1.8.0-openjdk-devel java-1.8.0-openjdk-devel.i686 which && \
-  yum install -y make curl-devel expat-devel gettext-devel openssl-devel zlib-devel gcc perl-ExtUtils-MakeMaker && \
-  curl -L https://www.kernel.org/pub/software/scm/git/git-2.8.3.tar.gz | tar xzv && \
-  pushd git-2.8.3 && \
-  make prefix=/usr/ install && \
-  popd && \
-  rm -rf git-2.8.3* && \
-  yum remove -y make curl-devel expat-devel gettext-devel openssl-devel zlib-devel gcc perl-ExtUtils-MakeMaker && \
+  yum install -y docker git java-1.8.0-openjdk-devel java-1.8.0-openjdk-devel.i686 unzip which && \
   yum clean all
 
 # Maven
