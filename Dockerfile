@@ -8,7 +8,7 @@ RUN yum update -y && \
 ENV MAVEN_VERSION 3.5.2
 RUN curl -s -L http://mirrors.ukfast.co.uk/sites/ftp.apache.org/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz | tar -C /opt -xzv
 
-ENV M2_HOME /opt/apache-maven-3.3.9
+ENV M2_HOME /opt/apache-maven-$MAVEN_VERSION
 ENV maven.home $M2_HOME
 ENV M2 $M2_HOME/bin
 ENV PATH $M2:$PATH
