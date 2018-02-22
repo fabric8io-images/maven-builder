@@ -1,48 +1,25 @@
 FROM centos:7
 
 RUN yum update -y && \
-  yum install -y docker unzip java-1.8.0-openjdk-devel java-1.8.0-openjdk-devel.i686 which && \
-  yum install -y make curl-devel expat-devel gettext-devel openssl-devel zlib-devel gcc perl-ExtUtils-MakeMaker && \
-  curl -L https://www.kernel.org/pub/software/scm/git/git-2.8.3.tar.gz | tar xzv && \
-  pushd git-2.8.3 && \
-  make prefix=/usr/ install && \
-  popd && \
-  rm -rf git-2.8.3* && \
-  yum remove -y make curl-devel expat-devel gettext-devel openssl-devel zlib-devel gcc perl-ExtUtils-MakeMaker && \
+  yum install -y docker git java-1.8.0-openjdk-devel java-1.8.0-openjdk-devel.i686 unzip which && \
   yum clean all
 
-RUN curl --retry 999 --retry-max-time 0  -sSL https://bintray.com/artifact/download/fabric8io/helm-ci/helm-v0.1.0%2B825f5ef-linux-amd64.zip > helm.zip && \
-  unzip helm.zip && \
-  rm -f helm.zip && \
-  mv helm /usr/bin/
-
 # Maven
-RUN curl -L http://mirrors.ukfast.co.uk/sites/ftp.apache.org/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.tar.gz | tar -C /opt -xzv
+ENV MAVEN_VERSION 3.5.2
+RUN curl -s -L http://mirrors.ukfast.co.uk/sites/ftp.apache.org/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz | tar -C /opt -xzv
 
-ENV M2_HOME /opt/apache-maven-3.3.9
+ENV M2_HOME /opt/apache-maven-$MAVEN_VERSION
 ENV maven.home $M2_HOME
 ENV M2 $M2_HOME/bin
 ENV PATH $M2:$PATH
 
-# Set JDK to be 32bit
-COPY set_java $M2
-RUN $M2/set_java && rm $M2/set_java
-RUN java -version
-
-# hub
-RUN curl -L https://github.com/github/hub/releases/download/v2.2.3/hub-linux-amd64-2.2.3.tgz | tar xzv && \
-  mv hub-linux-amd64-2.2.3/bin/hub /usr/bin/ && \
-  rm -rf hub-linux-amd64-2.2.3
-
-# exposecontroller
-ENV EXPOSECONTROLLER_VERSION 2.3.27
-RUN curl -L https://github.com/fabric8io/exposecontroller/releases/download/v$EXPOSECONTROLLER_VERSION/exposecontroller-linux-amd64 > exposecontroller && \
-  chmod +x exposecontroller && \
-  mv exposecontroller /usr/bin/
-
-# updatebot
-ENV UPDATEBOT_VERSION 1.0.5
-RUN curl -L http://central.maven.org/maven2/io/fabric8/updatebot/updatebot/$UPDATEBOT_VERSION/updatebot-$UPDATEBOT_VERSION.jar -o /usr/bin/updatebot && chmod +x /usr/bin/updatebot
+# Set JDK to be 32bit and set alternatives.
+# Maven actually uses javac, not java
+RUN JAVA_32=$(alternatives --display java | awk '/family.*i386/{print $1}') && \
+    alternatives --set java ${JAVA_32} && \
+    JAVAC_32=$(alternatives --display javac | awk '/family.*i386/{print $1}') && \
+    alternatives --set javac ${JAVAC_32} && \
+    java -version
 
 RUN mkdir /root/workspaces
 WORKDIR /root/workspaces
