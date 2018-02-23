@@ -23,4 +23,5 @@ RUN JAVA_32=$(alternatives --display java | awk '/family.*i386/{print $1}') && \
 
 RUN mkdir /root/workspaces
 WORKDIR /root/workspaces
-CMD sleep infinity
+COPY maven-cache.sh .
+CMD ["/bin/bash","maven-cache.sh"]
