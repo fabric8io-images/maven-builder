@@ -47,4 +47,4 @@ RUN curl -L http://central.maven.org/maven2/io/fabric8/updatebot/updatebot/$UPDA
 RUN mkdir /root/workspaces
 WORKDIR /root/workspaces
 COPY maven-cache.sh .
-CMD ["/bin/bash","maven-cache.sh"]
+CMD ["/bin/sh","maven-cache.sh"]
