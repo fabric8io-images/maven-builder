@@ -23,6 +23,7 @@ ENV M2_HOME /opt/apache-maven-3.3.9
 ENV maven.home $M2_HOME
 ENV M2 $M2_HOME/bin
 ENV PATH $M2:$PATH
+RUN mkdir --parents --mode 777 /root/.mvnrepository
 
 # Set JDK to be 32bit
 COPY set_java $M2
