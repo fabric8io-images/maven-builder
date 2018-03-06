@@ -1,14 +1,9 @@
 FROM centos:7
 
 RUN yum update -y && \
-  yum install -y docker unzip java-1.8.0-openjdk-devel java-1.8.0-openjdk-devel.i686 which && \
-  yum install -y make curl-devel expat-devel gettext-devel openssl-devel zlib-devel gcc perl-ExtUtils-MakeMaker && \
-  curl -L https://www.kernel.org/pub/software/scm/git/git-2.8.3.tar.gz | tar xzv && \
-  pushd git-2.8.3 && \
-  make prefix=/usr/ install && \
-  popd && \
-  rm -rf git-2.8.3* && \
-  yum remove -y make curl-devel expat-devel gettext-devel openssl-devel zlib-devel gcc perl-ExtUtils-MakeMaker && \
+  yum install -y centos-release-scl && \
+  yum install -y docker sclo-git212-git unzip java-1.8.0-openjdk-devel java-1.8.0-openjdk-devel.i686 which && \
+  scl enable sclo-git212 bash && \
   yum clean all
 
 RUN curl --retry 999 --retry-max-time 0  -sSL https://bintray.com/artifact/download/fabric8io/helm-ci/helm-v0.1.0%2B825f5ef-linux-amd64.zip > helm.zip && \
