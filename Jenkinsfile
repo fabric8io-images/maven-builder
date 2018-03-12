@@ -39,9 +39,32 @@ dockerTemplate {
         }
       }
 
+      stage('Test') {
+
+        // Spawn the image just created
+        mavenNode(mavenImage:image) {
+          container('maven') {
+            echo 'Container spawned successfully'
+            sh 'cat /etc/redhat-release'
+            sh 'hostname'
+            sh 'java -version'
+            sh 'mvn -version'
+            sh 'git --version'
+
+            sh 'git clone --depth=1 https://github.com/openshiftio-vertx-boosters/vertx-http-booster'
+
+            dir('vertx-http-booster') {
+              sh 'pwd'
+              sh 'mvn clean -B -e -U package -Dmaven.test.skip=false -P openshift'
+            }
+          }
+        }
+      }
+
       if (utils.isCI()) {
         stage('Notify the PR') {
-          if (!env.CHANGE_ID) {
+          def pr = env.CHANGE_ID
+          if (!pr) {
             error "No pull request number found so cannot comment on PR"
           }
           def message = "Snapshot maven-builder image is available for testing.  `docker pull ${image}`"
