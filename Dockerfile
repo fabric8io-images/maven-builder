@@ -1,15 +1,32 @@
 FROM centos:7
 
 RUN yum update -y && \
-  yum install -y docker unzip java-1.8.0-openjdk-devel java-1.8.0-openjdk-devel.i686 which && \
-  yum install -y make curl-devel expat-devel gettext-devel openssl-devel zlib-devel gcc perl-ExtUtils-MakeMaker && \
-  curl -L https://www.kernel.org/pub/software/scm/git/git-2.8.3.tar.gz | tar xzv && \
-  pushd git-2.8.3 && \
-  make prefix=/usr/ install && \
-  popd && \
-  rm -rf git-2.8.3* && \
-  yum remove -y make curl-devel expat-devel gettext-devel openssl-devel zlib-devel gcc perl-ExtUtils-MakeMaker && \
+  yum install -y centos-release-scl && \
+  yum install -y docker sclo-git212-git unzip java-1.8.0-openjdk-devel java-1.8.0-openjdk-devel.i686 which && \
   yum clean all
+
+# Enable packages installed from SCL
+#
+# This approach is a hack, but is the only option that worked well with bash and
+# sh in both interactive and non interactive modes.
+#
+# 1. Standard `scl enable`, `scl_source` etc wont work because each `RUN`
+# statement spawns a new subshell and the changes in ENV is not persistent.
+#
+# 2. Sourcing files is hard because there is no file that is read by bash and sh
+# in both interactive and non interactive modes.
+#
+# 3. Setting $ENV and $BASH_ENV to a file that executes commands from 1 didn't
+# work with non interactive shells even though the docs says it will.
+#
+# If you would like to change this, you can test it with following commands
+#
+# `docker run <image> sh -c 'git --version'`
+# `docker run <image> bash -c 'git --version'`
+# `docker run <image> sh -ic 'git --version'`
+# `docker run <image> bash -c 'git --version'`
+
+ENV PATH=/opt/rh/sclo-git212/root/bin:$PATH
 
 RUN curl --retry 999 --retry-max-time 0  -sSL https://bintray.com/artifact/download/fabric8io/helm-ci/helm-v0.1.0%2B825f5ef-linux-amd64.zip > helm.zip && \
   unzip helm.zip && \
