@@ -23,7 +23,7 @@ function setup() {
     # We need to disable selinux for now, XXX
     /usr/sbin/setenforce 0 || :
 
-    yum -y install docker
+    yum -y install docker git
     service docker start
 
     echo 'CICO: Build environment created.'
