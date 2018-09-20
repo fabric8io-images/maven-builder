@@ -68,4 +68,9 @@ function build() {
     docker push ${image}
 
     runTest ${image}
+
+    if [[ $1 != "deploy" ]];then
+        message="Hurray! Snapshot maven-builder image is available for testing. \`docker pull ${image}\`"
+        addCommentToPullRequest "${message}" "${ghprbPullId}" "${ghprbGhRepository}"
+    fi
 }
