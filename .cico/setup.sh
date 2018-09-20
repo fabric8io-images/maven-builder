@@ -14,6 +14,7 @@ function setup() {
                 ghprbTargetBranch \
                 ghprbPullId \
                 GIT_COMMIT \
+                CICO_API_KEY \
                 BUILD_ID)"
 
         mkdir -p ${HOME}/.docker
@@ -41,6 +42,20 @@ function addCommentToPullRequest() {
     set -x
 }
 
+function runTest() {
+    local testImage=${1}
+    local rsync_path=devtools@artifacts.ci.centos.org::devtools/maven-cache
+
+    # Get the maven-cache
+    RSYNC_PASSWORD=${CICO_API_KEY:0:13} rsync -auz ${rsync_path}/.m2 ${HOME}
+
+    # Run the tests
+    docker run -v${HOME}/.m2:/root/.m2 ${testImage} /bin/bash -xe -c 'cat /etc/redhat-release && java -version && mvn --version && git --version && git clone --depth=1 https://github.com/openshiftio-vertx-boosters/vertx-http-booster && cd vertx-http-booster && pwd && mvn clean -B -e -U package -Dmaven.test.skip=false -P openshift'
+
+    # Save the maven-cache
+    RSYNC_PASSWORD=${CICO_API_KEY:0:13} rsync -auz --delete ${HOME}/.m2 ${rsync_path}
+    du -sh ~/.m2
+}
 
 function build() {
     local version="SNAPSHOT-PR-${ghprbPullId}-${BUILD_ID}"
@@ -52,7 +67,5 @@ function build() {
 
     docker push ${image}
 
-    [[ $1 == "deploy" ]] && return
-
-    docker run ${image} /bin/bash -xe -c 'cat /etc/redhat-release && java -version && mvn --version && git --version && git clone --depth=1 https://github.com/openshiftio-vertx-boosters/vertx-http-booster && cd vertx-http-booster && pwd && mvn clean -B -e -U package -Dmaven.test.skip=false -P openshift'
+    runTest ${image}
 }
